@@ -1,10 +1,13 @@
 import xml.etree.ElementTree as ET
 import re
 import json
+from servicios import servicios
 from positivos import positivos
 from negativos import negativos
 from neutros import neutros
 from mensajes import mensajes
+from empresa import empresa
+from alias import alias
 class manager():
     def __init__(self):
         self.positivos = []
@@ -25,7 +28,11 @@ class manager():
         new = neutros(palabra)
         self.neutros.append(new)
 
-    def agregarempresa(self,)
+    def agregarempresa(self,nombreemp,nombreserv,alias):
+        newempre = alias(alias)
+        newempre1= servicios(nombreserv,newempre)
+        newempre2= empresa(nombreemp,newempre1)
+        self.empresas.append(newempre2)
 
     def agregarmensaje(self, mensaje):
         new = mensajes(mensaje)

@@ -17,18 +17,21 @@ def home():
 @app.route('/add', methods = ['POST'])
 def carga():
     xml = request.data.decode('utf-8')
+    xml = xml.lower()
     raiz = ET.XML(xml)
-    raiz = raiz.lower()
     for elemento in raiz.iter('diccionario'):
             for subelemento in elemento.iter('sentimientos_positivos'):
                 for subsubelemento in subelemento.iter('palabra'):
                     palabraposi=subsubelemento.text
+                    manager.agregardiccioposi(palabraposi)
             for subelemento1 in elemento.iter('sentimientos_negativos'):
                 for subsubelemento1 in subelemento1.iter('palabra'):
                     palabranega=subsubelemento1.text
+                    manager.agregardiccionega(palabranega)
             for subelementos in elemento.iter('sentimientos_neutros'):
                 for subsubelementos1 in subelementos.iter('palabra'):
                     palabraneutro=subsubelementos1.text
+                    manager.agregardiccioneu(palabraneutro)
             for subelemento2 in elemento.iter('empresas_analizar'):
                 for subsubelemento2 in subelemento2.iter('nombre'):
                     nombreemp=subsubelemento2.text
@@ -36,14 +39,11 @@ def carga():
                     nombreserv=subsubelemento3.attrib['nombre']
                     for subsubsubelemento in subsubelemento3.iter('alias'):
                         alias= subsubsubelemento.text
+                        manager.agregarempresa(nombreemp,nombreserv,alias)
     for elemento1 in raiz.iter('lista_mensajes'):
             for subelementop in elemento1.iter('mensaje'):
                 mensaje=subelementop.text
-    manager.agregardiccioposi(palabraposi)
-    manager.agregardiccionega(palabranega)
-    manager.agregardiccioneu(palabraneutro)
-    manager.agregarempresa(nombreemp,nombreserv,alias)
-    manager.agregarmensaje(mensaje)
+                manager.agregarmensaje(mensaje)
     return jsonify({'ok' : True, 'msg':'Archivo leido, y datos creados exitosamente'}), 200
 
 # EJECUTA LA API
