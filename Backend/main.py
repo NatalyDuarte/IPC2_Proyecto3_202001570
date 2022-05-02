@@ -44,6 +44,7 @@ def carga():
             for subelementop in elemento1.iter('mensaje'):
                 mensaje=subelementop.text
                 manager.agregarmensaje(mensaje)
+    manager.cantimensajes()
     return jsonify({'ok' : True, 'msg':'Archivo leido, y datos creados exitosamente'}), 200
 
 # EJECUTA LA API

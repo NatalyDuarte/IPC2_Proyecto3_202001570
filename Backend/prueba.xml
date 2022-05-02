@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <solicitud_clasificacion>
-    <diccionario>
+    <DICCIONARIO>
         <sentimientos_positivos>
             <palabra> bueno </palabra>
             <palabra> excelente </palabra>

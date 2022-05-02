@@ -16,9 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from Proyecto3.views import inicio
-
+from Proyecto3.views import home
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('admin/', admin.site.urls),
-    path('inicio/',inicio),
+    path('home/',home),
 ]
