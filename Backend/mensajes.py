@@ -1,6 +1,10 @@
 class mensajes():
-    def __init__(self, mensaje):
+    def __init__(self, lugar,fecha,usuario,redsocial,mensaje):
         self.mensaje= mensaje
+        self.lugar = lugar
+        self.fecha = fecha
+        self.usuario = usuario
+        self.redsocial = redsocial
     
     def getmensaje (self):
         return self.mensaje

@@ -28,10 +28,6 @@ def carga():
                 for subsubelemento1 in subelemento1.iter('palabra'):
                     palabranega=subsubelemento1.text
                     manager.agregardiccionega(palabranega)
-            for subelementos in elemento.iter('sentimientos_neutros'):
-                for subsubelementos1 in subelementos.iter('palabra'):
-                    palabraneutro=subsubelementos1.text
-                    manager.agregardiccioneu(palabraneutro)
             for subelemento2 in elemento.iter('empresas_analizar'):
                 for subsubelemento2 in subelemento2.iter('nombre'):
                     nombreemp=subsubelemento2.text
@@ -44,7 +40,8 @@ def carga():
             for subelementop in elemento1.iter('mensaje'):
                 mensaje=subelementop.text
                 manager.agregarmensaje(mensaje)
-    manager.cantimensajes()
+    manager.fechas()
+    manager.xmlrespuesta()
     return jsonify({'ok' : True, 'msg':'Archivo leido, y datos creados exitosamente'}), 200
 
 # EJECUTA LA API

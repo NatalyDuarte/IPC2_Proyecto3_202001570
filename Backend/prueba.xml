@@ -15,11 +15,6 @@
             <palabra> decepcionado </palabra>
             <palabra> enojo </palabra>
         </sentimientos_negativos>
-        <sentimientos_neutros>
-            <palabra> medio </palabra>
-            <palabra> regular </palabra>
-            <palabra> casual </palabra>
-        </sentimientos_neutros>
         <empresas_analizar>
             <empresa>
                 <nombre> USAC </nombre>
