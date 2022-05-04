@@ -15,6 +15,8 @@ class manager():
         self.empresas = []
         self.mensajes = []
         self.respuestaposi = []
+        self.respuestanega = []
+        self.respuestaneu = []
         self.fecha = []
 
     def agregardiccioposi(self, palabra):
@@ -102,7 +104,11 @@ class manager():
             mens=ET.SubElement(respuesta, "mensajes")
             ET.SubElement(mens, "total").text=str(fec)
             posi=self.cantidadPosi(i)
-            #ET.SubElement(mens, "positivos").text
+            ET.SubElement(mens, "positivos").text=str(posi)
+            nega=self.cantidadNega(i)
+            ET.SubElement(mens, "negativos").text=str(nega)
+            neu=self.cantidadNeu(i)
+            ET.SubElement(mens, "neutros").text=str(neu)
 
         filexml = ET.ElementTree(raiz)
         filexml.write("Resultado.xml")
@@ -122,18 +128,15 @@ class manager():
         return contador
 
     def cantidadPosi(self,fecha):
+        self.respuestaposi = []
+        self.respuestanega = []
+        self.respuestaneu = []
         for i in self.mensajes:
             if i.fecha == fecha:
-                if len(self.respuestaposi) !=0:
-                    j = self.verificarPosi(i.mensaje)
-                    '''
-                    if j == False:
-                        self.datoNitE.append(i.emisor)
-                    '''
-                else:
-                    self.verificarPosi(i.mensaje)
-                   # self.datoNitE.append(i.emisor)
-        #return len(self.datoNitE)
+                j = self.verificarPosi(i.mensaje)
+                if j == True:
+                    self.respuestaposi.append(i.mensaje)
+        return len(self.respuestaposi)
 
     def verificarPosi(self,mensaje):
         contadorposi=0
@@ -145,16 +148,79 @@ class manager():
                 pass
         contadornega=0
         for nega in self.negativos:
-            resu=re.findall(nega.palabra,mensaje)
-            if len(resu)!=0:
+            resus=re.findall(nega.palabra,mensaje)
+            if len(resus)!=0:
                 contadornega +=1
             else:
                 pass
         if contadorposi>contadornega:
-            return contadorposi
+            return True
         else:
-            return 0
+            return False
 
+    def cantidadNega(self,fecha):
+        self.respuestaposi = []
+        self.respuestanega = []
+        self.respuestaneu = []
+        for i in self.mensajes:
+            if i.fecha == fecha:
+                j = self.verificarNega(i.mensaje)
+                if j == True:
+                    self.respuestanega.append(i.mensaje)
+        return len(self.respuestanega)
+
+    def verificarNega(self,mensaje):
+        contadorposi=0
+        contadornega=0
+        for posi in self.positivos:                                     
+            resu=re.findall(posi.palabra,mensaje)
+            print(resu)
+            if len(resu)!=0:
+                contadorposi +=1
+            else:
+                pass       
+        for nega in self.negativos:
+            resus=re.findall(nega.palabra,mensaje)
+            if len(resus)!=0:
+                contadornega +=1
+            else:
+                pass
+        if contadorposi<contadornega:
+            return True
+        else:
+            return False
+
+    def cantidadNeu(self,fecha):
+        self.respuestaposi = []
+        self.respuestanega = []
+        self.respuestaneu = []
+        for i in self.mensajes:
+            if i.fecha == fecha:
+                j = self.verificarNeu(i.mensaje)
+                if j == True:
+                    self.respuestaneu.append(i.mensaje)
+        return len(self.respuestaneu)
+
+    def verificarNeu(self,mensaje):
+        contadorposi=0
+        for posi in self.positivos:
+            resu=re.findall(posi.palabra,mensaje)
+            print(resu)
+            if len(resu)!=0:
+                contadorposi +=1
+            else:
+                pass
+        contadornega=0
+        for nega in self.negativos:
+            resus=re.findall(nega.palabra,mensaje)
+            if len(resus)!=0:
+                contadornega +=1
+            else:
+                pass
+        if contadorposi==contadornega:
+            return True
+        else:
+            return False
         
             
         
