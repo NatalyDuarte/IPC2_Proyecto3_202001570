@@ -7,7 +7,6 @@ class Empresa():
     def getNombre (self):
         return self.nombre
 
-    def agregarservicio(self,servicio,alias):
+    def agregarservicio(self,servicio):
         new= servicios(servicio)
         self.servicios.append(new)
-        new.agregaralias(alias)

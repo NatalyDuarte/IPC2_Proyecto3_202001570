@@ -29,13 +29,17 @@ def carga():
                     palabranega=subsubelemento1.text
                     manager.agregardiccionega(palabranega)
             for subelemento2 in elemento.iter('empresas_analizar'):
-                for subsubelemento2 in subelemento2.iter('nombre'):
-                    nombreemp=subsubelemento2.text
-                for subsubelemento3 in subelemento2.iter('servicio'):
-                    nombreserv=subsubelemento3.attrib['nombre']
-                    for subsubsubelemento in subsubelemento3.iter('alias'):
-                        alias= subsubsubelemento.text
-                        manager.agregarempresa(nombreemp,nombreserv,alias)
+                for subsubelemento2 in subelemento2.iter('empresa'):
+                    for subsubelemento22 in subsubelemento2.iter('nombre'):
+                        nombreemp=subsubelemento22.text
+                        manager.agregarempresa(nombreemp)
+                    for subsubelemento33 in subsubelemento2.iter('servicio'):
+                        nombreserv=subsubelemento33.attrib['nombre']
+                        manager.agregarservicio(nombreserv)
+                        for subsubsubelemento in subsubelemento33.iter('alias'):
+                            alias= subsubsubelemento.text
+                            manager.agregaralias(alias)
+                           
     for elemento1 in raiz.iter('lista_mensajes'):
             for subelementop in elemento1.iter('mensaje'):
                 mensaje=subelementop.text

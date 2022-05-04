@@ -18,6 +18,8 @@ class manager():
         self.respuestanega = []
         self.respuestaneu = []
         self.fecha = []
+        self.contadorempre = 0
+        self.mensajeres = []
 
     def agregardiccioposi(self, palabra):
         new = positivos(palabra)
@@ -27,10 +29,18 @@ class manager():
         new = negativos(palabra)
         self.negativos.append(new)
 
-    def agregarempresa(self,nombreemp,nombreserv,alias): 
+    def agregarempresa(self,nombreemp): 
+        global newempre
         newempre= Empresa(nombreemp)
         self.empresas.append(newempre)
-        newempre.agregarservicio(nombreserv,alias)
+
+    def agregarservicio(self, nombreserv):
+        global newservi
+        newservi= servicios(nombreserv)
+        newempre.agregarservicio(newservi)
+
+    def agregaralias(self,alias):
+        newservi.agregaralias(alias)
         
     def agregarmensaje(self, mensaje):
         luga=re.findall(r'fecha\s*:\s*[\w,\.]+\s*[,]',mensaje,flags=re.I)
@@ -103,13 +113,24 @@ class manager():
             fec=self.cantidadFecha(i)
             mens=ET.SubElement(respuesta, "mensajes")
             ET.SubElement(mens, "total").text=str(fec)
-            posi=self.cantidadPosi(i)
+            posi=self.cantidadPosi(i,self.mensajes)
             ET.SubElement(mens, "positivos").text=str(posi)
-            nega=self.cantidadNega(i)
+            nega=self.cantidadNega(i,self.mensajes)
             ET.SubElement(mens, "negativos").text=str(nega)
-            neu=self.cantidadNeu(i)
+            neu=self.cantidadNeu(i,self.mensajes)
             ET.SubElement(mens, "neutros").text=str(neu)
-
+            anali=ET.SubElement(respuesta, "analisis")
+            nomemp=self.Obempresa(i)
+            empre=ET.SubElement(anali,"empresa", nombre=nomemp)
+            mensemp=ET.SubElement(empre, "mensajes")
+            ET.SubElement(mensemp, "total").text=str(self.contadorempre)
+            if len(self.mensajeres)!=0:         
+                posi1=self.cantidadPosi(i,self.mensajeres)  
+                ET.SubElement(mensemp, "positivos").text=str(posi1)               
+                nega1=self.cantidadNega(i,self.mensajeres)  
+                ET.SubElement(mensemp, "negativos").text=str(nega1)                 
+                neu1=self.cantidadNeu(i,self.mensajeres)  
+                ET.SubElement(mensemp, "neutros").text=str(neu1) 
         filexml = ET.ElementTree(raiz)
         filexml.write("Resultado.xml")
 
@@ -127,11 +148,32 @@ class manager():
                 contador+=1
         return contador
 
-    def cantidadPosi(self,fecha):
+    def Obempresa(self,fecha):
+        self.contadorempre=0
+        var="No existe"
+        for i in self.mensajes:
+            if i.fecha == fecha:
+                for u in self.empresas:
+                    nom=u.nombre
+                    nom=nom.replace(",","")
+                    nom=nom.replace(";","") 
+                    nom=nom.replace(" ","")    
+                    nom=nom.replace(".","") 
+                    bus=re.findall(nom,i.mensaje)
+                    if len(bus)!=0:
+                        var=u.nombre
+                        self.contadorempre += 1 
+                        self.mensajeres.append(mensajes(i.lugar,i.fecha,i.usuario,i.redsocial,i.mensaje))                     
+                    else:
+                        pass
+        return var
+        
+
+    def cantidadPosi(self,fecha,arreglo):
         self.respuestaposi = []
         self.respuestanega = []
         self.respuestaneu = []
-        for i in self.mensajes:
+        for i in arreglo:
             if i.fecha == fecha:
                 j = self.verificarPosi(i.mensaje)
                 if j == True:
@@ -141,14 +183,24 @@ class manager():
     def verificarPosi(self,mensaje):
         contadorposi=0
         for posi in self.positivos:
-            resu=re.findall(posi.palabra,mensaje)
+            pala=posi.palabra
+            pala=pala.replace(",","")
+            pala=pala.replace(";","") 
+            pala=pala.replace(" ","")    
+            pala=pala.replace(".","") 
+            resu=re.findall(pala,mensaje)
             if len(resu)!=0:
                 contadorposi +=1
             else:
                 pass
         contadornega=0
         for nega in self.negativos:
-            resus=re.findall(nega.palabra,mensaje)
+            neg=nega.palabra
+            neg=neg.replace(",","")
+            neg=neg.replace(";","") 
+            neg=neg.replace(" ","")    
+            neg=neg.replace(".","") 
+            resus=re.findall(neg,mensaje)
             if len(resus)!=0:
                 contadornega +=1
             else:
@@ -158,11 +210,11 @@ class manager():
         else:
             return False
 
-    def cantidadNega(self,fecha):
+    def cantidadNega(self,fecha,arreglo):
         self.respuestaposi = []
         self.respuestanega = []
         self.respuestaneu = []
-        for i in self.mensajes:
+        for i in arreglo:
             if i.fecha == fecha:
                 j = self.verificarNega(i.mensaje)
                 if j == True:
@@ -172,15 +224,24 @@ class manager():
     def verificarNega(self,mensaje):
         contadorposi=0
         contadornega=0
-        for posi in self.positivos:                                     
-            resu=re.findall(posi.palabra,mensaje)
-            print(resu)
+        for posi in self.positivos:   
+            pala=posi.palabra
+            pala=pala.replace(",","")
+            pala=pala.replace(";","") 
+            pala=pala.replace(" ","")    
+            pala=pala.replace(".","")                          
+            resu=re.findall(pala,mensaje)
             if len(resu)!=0:
                 contadorposi +=1
             else:
                 pass       
         for nega in self.negativos:
-            resus=re.findall(nega.palabra,mensaje)
+            neg=nega.palabra
+            neg=neg.replace(",","")
+            neg=neg.replace(";","") 
+            neg=neg.replace(" ","")    
+            neg=neg.replace(".","") 
+            resus=re.findall(neg,mensaje)
             if len(resus)!=0:
                 contadornega +=1
             else:
@@ -190,11 +251,11 @@ class manager():
         else:
             return False
 
-    def cantidadNeu(self,fecha):
+    def cantidadNeu(self,fecha,arreglo):
         self.respuestaposi = []
         self.respuestanega = []
         self.respuestaneu = []
-        for i in self.mensajes:
+        for i in arreglo:
             if i.fecha == fecha:
                 j = self.verificarNeu(i.mensaje)
                 if j == True:
@@ -204,15 +265,24 @@ class manager():
     def verificarNeu(self,mensaje):
         contadorposi=0
         for posi in self.positivos:
-            resu=re.findall(posi.palabra,mensaje)
-            print(resu)
+            pala=posi.palabra
+            pala=pala.replace(",","")
+            pala=pala.replace(";","") 
+            pala=pala.replace(" ","")    
+            pala=pala.replace(".","") 
+            resu=re.findall(pala,mensaje)
             if len(resu)!=0:
                 contadorposi +=1
             else:
                 pass
         contadornega=0
         for nega in self.negativos:
-            resus=re.findall(nega.palabra,mensaje)
+            neg=nega.palabra
+            neg=neg.replace(",","")
+            neg=neg.replace(";","") 
+            neg=neg.replace(" ","")    
+            neg=neg.replace(".","") 
+            resus=re.findall(neg,mensaje)
             if len(resus)!=0:
                 contadornega +=1
             else:
@@ -221,6 +291,3 @@ class manager():
             return True
         else:
             return False
-        
-            
-        
