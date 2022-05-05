@@ -10,3 +10,6 @@ class Empresa():
     def agregarservicio(self,servicio):
         new= servicios(servicio)
         self.servicios.append(new)
+    
+    def getServicios(self):
+        return self.servicios

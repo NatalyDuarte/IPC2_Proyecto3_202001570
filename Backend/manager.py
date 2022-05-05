@@ -4,14 +4,13 @@ import json
 from servicios import servicios
 from positivos import positivos
 from negativos import negativos
-from neutros import neutros
 from mensajes import mensajes
 from empresa import Empresa
+import webbrowser
 class manager():
     def __init__(self):
         self.positivos = []
         self.negativos = []
-        self.neutros = []
         self.empresas = []
         self.mensajes = []
         self.respuestaposi = []
@@ -19,7 +18,10 @@ class manager():
         self.respuestaneu = []
         self.fecha = []
         self.contadorempre = 0
+        self.contadorservi = 0
         self.mensajeres = []
+        self.mensaser = []
+        self.cantidadempre = []
 
     def agregardiccioposi(self, palabra):
         new = positivos(palabra)
@@ -122,15 +124,38 @@ class manager():
             anali=ET.SubElement(respuesta, "analisis")
             nomemp=self.Obempresa(i)
             empre=ET.SubElement(anali,"empresa", nombre=nomemp)
-            mensemp=ET.SubElement(empre, "mensajes")
-            ET.SubElement(mensemp, "total").text=str(self.contadorempre)
-            if len(self.mensajeres)!=0:         
-                posi1=self.cantidadPosi(i,self.mensajeres)  
-                ET.SubElement(mensemp, "positivos").text=str(posi1)               
-                nega1=self.cantidadNega(i,self.mensajeres)  
-                ET.SubElement(mensemp, "negativos").text=str(nega1)                 
-                neu1=self.cantidadNeu(i,self.mensajeres)  
-                ET.SubElement(mensemp, "neutros").text=str(neu1) 
+            if nomemp=="No existe":
+                mensemp=ET.SubElement(empre, "mensajes")
+                ET.SubElement(mensemp, "total").text=str(self.contadorempre)
+                if len(self.mensajeres)!=0:         
+                    posi1=self.cantidadPosi(i,self.mensajeres)  
+                    ET.SubElement(mensemp, "positivos").text=str(0)               
+                    nega1=self.cantidadNega(i,self.mensajeres)  
+                    ET.SubElement(mensemp, "negativos").text=str(0)                 
+                    neu1=self.cantidadNeu(i,self.mensajeres)
+                    neu1=posi1+nega1+neu1  
+                    ET.SubElement(mensemp, "neutros").text=str(neu1)
+            else:
+                mensemp=ET.SubElement(empre, "mensajes")
+                ET.SubElement(mensemp, "total").text=str(self.contadorempre)
+                if len(self.mensajeres)!=0:         
+                    posi1=self.cantidadPosi(i,self.mensajeres)  
+                    ET.SubElement(mensemp, "positivos").text=str(posi1)               
+                    nega1=self.cantidadNega(i,self.mensajeres)  
+                    ET.SubElement(mensemp, "negativos").text=str(nega1)                 
+                    neu1=self.cantidadNeu(i,self.mensajeres)  
+                    ET.SubElement(mensemp, "neutros").text=str(neu1) 
+            nomser=self.Obeservi(i)
+            servis=ET.SubElement(empre, "servicio", nombre=nomser)
+            mensserv=ET.SubElement(servis, "mensajes")
+            ET.SubElement(mensserv, "total").text=str(self.contadorservi)
+            if len(self.mensaser)!=0:         
+                posi2=self.cantidadPosi(i,self.mensaser)  
+                ET.SubElement(mensserv, "positivos").text=str(posi2)               
+                nega2=self.cantidadNega(i,self.mensaser)  
+                ET.SubElement(mensserv, "negativos").text=str(nega2)                 
+                neu2=self.cantidadNeu(i,self.mensaser)  
+                ET.SubElement(mensserv, "neutros").text=str(neu2) 
         filexml = ET.ElementTree(raiz)
         filexml.write("Resultado.xml")
 
@@ -166,6 +191,38 @@ class manager():
                         self.mensajeres.append(mensajes(i.lugar,i.fecha,i.usuario,i.redsocial,i.mensaje))                     
                     else:
                         pass
+        return var
+
+    def Obeservi(self,fecha):
+        self.contadorempre=0
+        var="No existe"
+        for i in self.mensajes:
+            if i.fecha == fecha:
+                for u in self.empresas:
+                    servicio=u.getServicios()                
+                    for ser in servicio:
+                        servi=ser.nombre
+                        servi1=servi.nombre
+                        servi1=servi1.replace(",","")
+                        servi1=servi1.replace(";","") 
+                        servi1=servi1.replace(" ","")    
+                        servi1=servi1.replace(".","") 
+                        resp=re.findall(servi1,i.mensaje)                       
+                        if len(resp)!=0:
+                            var=servi1
+                            self.contadorservi += 1 
+                            self.mensaser.append(mensajes(i.lugar,i.fecha,i.usuario,i.redsocial,i.mensaje))                     
+                        else:
+                            serv=servi.getAlias()
+                            for e in serv:
+                                resp1=re.findall(e,i.mensaje)
+                                if len(resp1)!=0:
+                                    var=servi1
+                                    self.contadorservi += 1 
+                                    self.mensaser.append(mensajes(i.lugar,i.fecha,i.usuario,i.redsocial,i.mensaje))                     
+                                else:
+                                    pass
+
         return var
         
 
@@ -289,5 +346,40 @@ class manager():
                 pass
         if contadorposi==contadornega:
             return True
+        elif contadorposi==0 and contadornega==0:
+            return True
         else:
             return False
+    
+    def consultaDatos(self):
+        ruta ="Backend/Resultado.xml"
+        #valor = self.LeerSalida(ruta)
+        webbrowser.open_new_tab('Resultado.xml')
+
+    def LeerSalida(self, objeto) -> str:
+        tree = ET.parse(objeto)
+        raiz = tree.getroot()
+        r = ET.tostring(raiz, encoding='unicode', method='xml')
+        return r
+    '''
+    def resumenFecha(self,fecha):
+        self.cantidadempre(fecha)
+        for i in self.datoNitE:
+            contador=0
+            for a in self.listadte:
+                if i == a.emisor and fecha == a.fecha:
+                    contador=contador+float(a.iva)
+            self.resumen.append(dato("emisor",i,contador))
+        self.datoNitE.clear()
+        self.cantidadNitR(fecha)
+        for i in self.datoNitR:
+            contador=0
+            for a in self.listadte:
+                if i== a.receptor and fecha == a.fecha:
+                    contador=contador+float(a.iva)
+            self.resumen.append(dato("receptor",i,contador))
+            print(self.resumen[0])
+        self.datoNitR.clear()
+        
+        return json.dumps([ob.__dict__ for ob in self.resumen])
+        '''

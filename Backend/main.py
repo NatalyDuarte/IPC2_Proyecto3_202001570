@@ -46,7 +46,22 @@ def carga():
                 manager.agregarmensaje(mensaje)
     manager.fechas()
     manager.xmlrespuesta()
+    v=manager.LeerSalida('Resultado.xml')
     return jsonify({'ok' : True, 'msg':'Archivo leido, y datos creados exitosamente'}), 200
+
+@app.route('/consulta')
+def consulta():
+    manager.consultaDatos() 
+    return jsonify({'ok' : True, 'msg':'Consulta de datos correcta'})
+
+'''
+@app.route('/resumeniva/<fecha>', methods=['GET'])
+def resumen(fecha):
+    date=str(fecha).replace("-","/")
+    proce=manager.resumenFecha(date)
+    manager.resumen.clear()
+    return proce
+'''
 
 # EJECUTA LA API
 if __name__ == '__main__':

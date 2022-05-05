@@ -5,3 +5,6 @@ class servicios():
 
     def agregaralias(self, alias):
         self.alias.append(alias)
+    
+    def getAlias(self):
+        return self.alias
