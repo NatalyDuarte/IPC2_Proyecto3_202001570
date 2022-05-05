@@ -7,6 +7,10 @@ from negativos import negativos
 from mensajes import mensajes
 from empresa import Empresa
 import webbrowser
+import matplotlib 
+import matplotlib.pyplot as plt
+import numpy as np
+from sys import flags
 class manager():
     def __init__(self):
         self.positivos = []
@@ -157,7 +161,7 @@ class manager():
                 neu2=self.cantidadNeu(i,self.mensaser)  
                 ET.SubElement(mensserv, "neutros").text=str(neu2) 
         filexml = ET.ElementTree(raiz)
-        filexml.write("Resultado.xml")
+        filexml.write("Resultado.xml",encoding='utf-8')
 
     def verificarfecha(self,fec):
         v = False
@@ -361,25 +365,120 @@ class manager():
         raiz = tree.getroot()
         r = ET.tostring(raiz, encoding='unicode', method='xml')
         return r
-    '''
+    
     def resumenFecha(self,fecha):
-        self.cantidadempre(fecha)
-        for i in self.datoNitE:
-            contador=0
-            for a in self.listadte:
-                if i == a.emisor and fecha == a.fecha:
-                    contador=contador+float(a.iva)
-            self.resumen.append(dato("emisor",i,contador))
-        self.datoNitE.clear()
-        self.cantidadNitR(fecha)
-        for i in self.datoNitR:
-            contador=0
-            for a in self.listadte:
-                if i== a.receptor and fecha == a.fecha:
-                    contador=contador+float(a.iva)
-            self.resumen.append(dato("receptor",i,contador))
-            print(self.resumen[0])
-        self.datoNitR.clear()
-        
-        return json.dumps([ob.__dict__ for ob in self.resumen])
-        '''
+        total=0
+        positivos=0
+        negativos=0
+        neutros=0
+        tree = ET.parse('Resultado.xml')
+        raiz = tree.getroot()
+        for elemento in raiz.iter('respuesta'):
+            for subelemento in elemento.iter('fecha'):
+                fech = subelemento.text
+                if fech==fecha:
+                    for subselemento in elemento.iter('mensajes'):
+                        for ele in subselemento.iter('total'):
+                            total = ele.text
+                        for ele1 in subselemento.iter('positivos'):
+                            positivos= ele1.text
+                        for ele2 in subselemento.iter('negativos'):
+                            negativos= ele2.text
+                        for ele3 in subselemento.iter('neutros'):
+                            neutros= ele3.text
+                else:
+                    pass
+        if total!=0:
+            arrex=[]
+            labels=[]
+            labels.append("positivos")
+            labels.append("negativos")
+            labels.append("neutros")
+            arrex.append(float(positivos))
+            arrex.append(float(negativos))
+            arrex.append(float(neutros))
+            colors = plt.get_cmap('Greens')(np.linspace(0.2, 0.7, len(arrex)))
+            fig, ax = plt.subplots()
+            ax.pie(arrex, colors=colors,labels=labels,autopct=("%1.f%%"))
+            #ax.set(xlim=(0, 8), xticks=np.arange(1, 8),ylim=(0, 8), yticks=np.arange(1, 8))
+            ax.axis('equal')
+            plt.title("Grafica por fecha")
+            plt.text(0,0.3,"Total: "+total,fontsize=14)
+            plt.text(0,0.2,"Positivos: "+positivos,fontsize=14)
+            plt.text(0,0.1,"Negativos: "+negativos,fontsize=14)
+            plt.text(0,0,"Neutros: "+neutros,fontsize=14)
+            plt.legend()
+            plt.savefig("Graficaporfecha.png")
+            print("Imagen generada exitosamente")
+        else:
+            pass
+    
+    def resumenFechaEmp(self,fecha,empresa):
+        total=0
+        positivos=0
+        negativos=0
+        neutros=0
+        total1=0
+        positivos1=0
+        negativos1=0
+        neutros1=0
+        tree = ET.parse('Resultado.xml')
+        raiz = tree.getroot()
+        for elemento in raiz.iter('respuesta'):
+            for subelemento in elemento.iter('fecha'):
+                fech = subelemento.text
+                if fech==fecha:
+                    for subselemento in elemento.iter('mensajes'):
+                        for ele in subselemento.iter('total'):
+                            total = ele.text
+                        for ele1 in subselemento.iter('positivos'):
+                            positivos= ele1.text
+                        for ele2 in subselemento.iter('negativos'):
+                            negativos= ele2.text
+                        for ele3 in subselemento.iter('neutros'):
+                            neutros= ele3.text
+                    for subselemento1 in elemento.iter('analisis'):
+                        for elee in subselemento1.iter('empresa'):
+                            nombreempre=elee.attrib['nombre']
+                            nombreempre=nombreempre.replace(" ","")
+                        if nombreempre == empresa:
+                            for elem in subselemento1.iter('mensajes'):
+                                for elee11 in elem.iter('total'):
+                                    total1= elee11.text
+                                for elee1 in elem.iter('positivos'):
+                                    positivos1= elee1.text
+                                for elee2 in elem.iter('negativos'):
+                                    negativos1= elee2.text
+                                for elee3 in elem.iter('neutros'):
+                                    neutros1= elee3.text
+                        else:
+                            pass
+                else:
+                    pass
+        if total!=0:
+            if total1!=0:
+                arrex=[]
+                labels=[]
+                labels.append("positivos")
+                labels.append("negativos")
+                labels.append("neutros")
+                arrex.append(float(positivos1))
+                arrex.append(float(negativos1))
+                arrex.append(float(neutros1))
+                colors = plt.get_cmap('Oranges')(np.linspace(0.2, 0.7, len(arrex)))
+                fig, ax = plt.subplots()
+                ax.pie(arrex, colors=colors,labels=labels,autopct=("%1.f%%"))
+                #ax.set(xlim=(0, 8), xticks=np.arange(1, 8),ylim=(0, 8), yticks=np.arange(1, 8))
+                ax.axis('equal')
+                plt.title("Grafica por fecha y empresa")
+                plt.text(0,0.3,"Total: "+total1,fontsize=14)
+                plt.text(0,0.2,"Positivos: "+positivos1,fontsize=14)
+                plt.text(0,0.1,"Negativos: "+negativos1,fontsize=14)
+                plt.text(0,0,"Neutros: "+neutros1,fontsize=14)
+                plt.legend()
+                plt.savefig("GraficaporfechaEmp.png")
+                print("Imagen generada exitosamente")
+            else:
+                pass
+        else:
+            pass

@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from xml.etree import ElementTree as ET
 from manager import manager
-
+import webbrowser
 app = Flask(__name__)
 CORS(app)
 
@@ -54,14 +54,27 @@ def consulta():
     manager.consultaDatos() 
     return jsonify({'ok' : True, 'msg':'Consulta de datos correcta'})
 
-'''
-@app.route('/resumeniva/<fecha>', methods=['GET'])
+@app.route('/resumenfecha/<fecha>', methods=['GET'])
 def resumen(fecha):
-    date=str(fecha).replace("-","/")
-    proce=manager.resumenFecha(date)
-    manager.resumen.clear()
-    return proce
-'''
+    fech=str(fecha).replace("-","/")
+    ob=manager.resumenFecha(fech)
+    return jsonify({'ok' : True, 'msg':'Todo correcto'})
+
+@app.route('/resumenfecha/<fecha>/<empresa>', methods=['GET'])
+def resumenempre(fecha,empresa):
+    fech=str(fecha).replace("-","/")
+    ob=manager.resumenFechaEmp(fech,empresa)
+    return jsonify({'ok' : True, 'msg':'Todo correcto'})
+
+@app.route('/ayudaop1', methods=['GET'])
+def ayudaop1():
+   return 'NOMBRE:Nataly Saraí Guzmán Duarte \n CARNÉ:202001570'
+
+@app.route('/ayudaop2', methods=['GET'])
+def ayudaop2():
+   webbrowser.open_new_tab('202001570_Ensayo.pdf')
+   return jsonify({'ok' : True, 'msg':'Todo correcto'})
+
 
 # EJECUTA LA API
 if __name__ == '__main__':
