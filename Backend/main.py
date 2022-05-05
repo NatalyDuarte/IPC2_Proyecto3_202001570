@@ -75,6 +75,22 @@ def ayudaop2():
    webbrowser.open_new_tab('202001570_Ensayo.pdf')
    return jsonify({'ok' : True, 'msg':'Todo correcto'})
 
+@app.route('/reset', methods=['GET'])
+def ayudaop2():
+   manager.resetear()
+   return jsonify({'ok' : True, 'msg':'Todo correcto'})
+
+@app.route('/pruebamen', methods = ['POST'])
+def carga():
+    xml = request.data.decode('utf-8')
+    xml = xml.lower()
+    raiz = ET.XML(xml)
+    for elemento in raiz.iter('mensaje'):
+        mensaje=elemento.text
+    manager.agregarmensajeprue(mensaje)
+    manager.xmlrespuestaprue()
+    v=manager.LeerSalida('ResultadoMens.xml')
+    return jsonify({'ok' : True, 'msg':'Archivo leido, y datos creados exitosamente'}), 200
 
 # EJECUTA LA API
 if __name__ == '__main__':

@@ -1,3 +1,4 @@
+from os import POSIX_SPAWN_DUP2
 import xml.etree.ElementTree as ET
 import re
 import json
@@ -26,6 +27,7 @@ class manager():
         self.mensajeres = []
         self.mensaser = []
         self.cantidadempre = []
+        self.mensajeprueba = []
 
     def agregardiccioposi(self, palabra):
         new = positivos(palabra)
@@ -479,3 +481,113 @@ class manager():
                 pass
         else:
             pass
+
+    def resetear(self):
+        self.positivos = []
+        self.negativos = []
+        self.empresas = []
+        self.mensajes = []
+        self.respuestaposi = []
+        self.respuestanega = []
+        self.respuestaneu = []
+        self.fecha = []
+        self.contadorempre = 0
+        self.contadorservi = 0
+        self.mensajeres = []
+        self.mensaser = []
+        self.cantidadempre = []
+        self.mensajeprueba = []
+
+    def agregarmensajeprue(self, mensaje):
+        luga=re.findall(r'fecha\s*:\s*[\w,\.]+\s*[,]',mensaje,flags=re.I)
+        if len(luga) !=0:
+            lugar = luga[0]
+            lugar=lugar.replace(":","")
+            lugar=lugar.replace("fecha","")
+            lugar=lugar.replace(",","")
+            lugar=lugar.replace(" ","")
+        else: 
+            pass
+        
+
+        contador=0
+        patronfech = "(?:(?:(?:(?:0[1-9]|1[0-9]|2[0-8])[\/](?:0[1-9]|1[012]))|(?:(?:29|30|31)[\/](?:0[13578]|1[02]))|(?:(?:29|30)[\/](?:0[4,6,9]|11)))[\/](?:19|[2-9][0-9])\d\d)|(?:29[\/]02[\/](?:19|[2-9][0-9])(?:00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96))"
+        fechi = re.findall(patronfech,mensaje)
+        if len(fechi) !=0:
+            fecha = fechi[0]
+        else: 
+            pass
+
+        usu=re.findall(r'usuario\s*:\s*[\w,^(?!\s)\.\@]+[\s]',mensaje,flags=re.I)
+        if len(usu) !=0:
+            usuarios = usu[0]
+            usuarios= usuarios.replace(":","")
+            usuarios=usuarios.replace("usuario","")
+            usuarios=usuarios.replace(" ","")
+            usuarios=usuarios.replace("red","")
+        else: 
+            pass
+        
+        red=re.findall(r'social\s*:\s*[\w,\.]+',mensaje,flags=re.I)
+        if len(red) !=0:
+            redso = red[0]
+            redso= redso.replace(":","")
+            redso= redso.replace("social","")
+            redso= redso.replace(" ","")
+            redso= redso.replace(",","")
+        else: 
+            pass
+
+        mensa=re.findall(redso+"\s*[\w\s,\.]+",mensaje)
+        if len(mensa) !=0:
+            mensaj = mensa[0]
+            mensaj= mensaj.replace(redso,"")
+            mensaj= mensaj.replace(".","")
+        else: 
+            pass
+
+        new = mensajes(lugar,fecha,usuarios,redso,mensaj)
+        self.mensajeprueba.append(new)
+
+    def xmlrespuestaprue(self):
+        raiz = ET.Element("respuesta")
+        for i in self.mensajeprueba:
+            ET.SubElement(raiz, "fecha").text = str(i.fecha)
+            ET.SubElement(raiz, "red_social").text = i.redsocial
+            ET.SubElement(raiz, "usuario").text = i.usuario
+            respuesta = ET.SubElement(raiz, "empresas").text = i.fecha
+            nomemp=self.Obempresa(i.fecha)
+            empre=ET.SubElement(respuesta,"empresa", nombre=nomemp)
+            if nomemp=="No existe":
+                nomser=self.Obeservi(i)
+                servis=ET.SubElement(empre, "servicio", nombre=nomser)
+                mensserv=ET.SubElement(servis, "mensajes")
+                ET.SubElement(mensserv, "total").text=str(self.contadorservi)
+                if len(self.mensaser)!=0:         
+                    posi2=self.cantidadPosi(i,self.mensaser)  
+                    ET.SubElement(mensserv, "positivos").text=str(0)               
+                    nega2=self.cantidadNega(i,self.mensaser)  
+                    ET.SubElement(mensserv, "negativos").text=str(0)                 
+                    neu2=self.cantidadNeu(i,self.mensaser)  
+                    ET.SubElement(mensserv, "neutros").text=str(neu2+nega2+POSIX_SPAWN_DUP2)
+            else:
+                nomser=self.Obeservi(i)
+                servis=ET.SubElement(empre, "servicio", nombre=nomser)
+                mensserv=ET.SubElement(servis, "mensajes")
+                ET.SubElement(mensserv, "total").text=str(self.contadorservi)
+                if len(self.mensaser)!=0:         
+                    posi2=self.cantidadPosi(i,self.mensaser)  
+                    ET.SubElement(mensserv, "positivos").text=str(posi2)               
+                    nega2=self.cantidadNega(i,self.mensaser)  
+                    ET.SubElement(mensserv, "negativos").text=str(nega2)                 
+                    neu2=self.cantidadNeu(i,self.mensaser)  
+                    ET.SubElement(mensserv, "neutros").text=str(neu2) 
+            posi=self.cantidadPosi(i.fecha,self.mensajeprueba)
+            ET.SubElement(respuesta, "palabras_positivas").text=str(posi)
+            nega=self.cantidadNega(i.fecha,self.mensajeprueba)
+            ET.SubElement(respuesta, "palabras_negativas").text=str(nega)
+            neu=self.cantidadNeu(i.fecha,self.mensajeprueba)
+            ET.SubElement(respuesta, "palabras_neutras").text=str(neu)
+  
+        filexml = ET.ElementTree(raiz)
+        filexml.write("ResultadoMens.xml",encoding='utf-8')
