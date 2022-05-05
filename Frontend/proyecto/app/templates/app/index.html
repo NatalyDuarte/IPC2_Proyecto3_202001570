@@ -4,7 +4,8 @@
 <title>Proyecto3</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link href="{% static 'App/styles/layout.css'%}" rel="stylesheet" type="text/css" media="all">
+{% load static%}
+<link rel="stylesheet" href="{% static 'app/layout.css'%} ">
 </head>
 <body id="top">
 <div class="bgded overlay padtop"> 
@@ -14,7 +15,7 @@
     </div>
     <nav id="mainav" class="fl_right"> 
       <ul class="clear">
-        <li class="active"><a href="index.html">Cargar Archivo</a></li>
+        <li class="active"><a href="#">Cargar Archivo</a></li>
         <input type="file" id="archivo" name="archivo" accept="XML/xml, .xml, .XML">
         <li><a class="drop" href="#">Peticiones</a>
             <ul>
@@ -38,8 +39,8 @@
   </header>
   <div id="pageintro" class="hoc clear"> 
     <ul class="nospace inline pushright">
-        <li><a class="btn" href="#">Enviar</a></li>
-        <li><a class="btn inverse" href="#">Reset</a></li>
+        <li><a class="btn" >Enviar</a></li>
+        <li><a class="btn">Reset</a></li>
       </ul>
       <div class="one_quarter">
         <h6 class="heading">Entrada</h6>
