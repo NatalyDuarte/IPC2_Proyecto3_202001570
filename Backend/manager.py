@@ -98,9 +98,7 @@ class manager():
 
         new = mensajes(lugar,fecha,usuarios,redso,mensaj)
         self.mensajes.append(new)
-
-
-        
+    
     def fechas(self):
         for i in self.mensajes:
             if len(self.fecha) !=0:
@@ -229,7 +227,6 @@ class manager():
 
         return var
         
-
     def cantidadPosi(self,fecha,arreglo):
         self.respuestaposi = []
         self.respuestanega = []

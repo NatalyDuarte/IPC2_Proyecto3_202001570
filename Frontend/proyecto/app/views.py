@@ -4,4 +4,4 @@ from .models import Post
 # Create your views here.
 def app(request):
     blogs = Post.objects.all()
-    return render(request,"app/index.html",{"blogs":blogs})
+    return render(request,"app/inicio.html",{"blogs":blogs})
