@@ -34,18 +34,6 @@
                     <li class="nav-item">
                         <a href="{% url 'app'%}" class="nav-link smoothScroll">Inicio</a>
                     </li>
-
-                    <li class="nav-item">
-                        <a href="{% url 'cargararchivo'%}" class="nav-link smoothScroll">Cargar Archivo</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="#class" class="nav-link smoothScroll">Peticiones</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="#schedule" class="nav-link smoothScroll">Ayuda</a>
-                    </li>
                 </ul>
             </div>
 
@@ -62,8 +50,9 @@
                          <div class="col-lg-8 col-md-10 mx-auto col-12">
                               <div class="hero-text mt-5 text-center">
 
-                                <h1 class="text-white" >Bienvenidos</h1>
-                                <h6 >Bienevenido al programa creado para la empresa Tecnologías Chapinas, S.A; consiste en un analizador que al ingresar un XML le da una respuesta a este</h6>
+                                <h1 class="text-white" >Bienvenidos al modulo de ayuda</h1>
+                                <a href="{% url 'estudiante'%}" class="btn custom-btn bordered mt-3" >Visualizar informacion del estudiante</a>
+                                <a href="{% url 'docu'%}" class="btn custom-btn bordered mt-3" >Visualizar la documentacion del programa</a>
                                    
                               </div>
                          </div>

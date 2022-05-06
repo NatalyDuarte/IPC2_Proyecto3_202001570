@@ -40,11 +40,11 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="#class" class="nav-link smoothScroll">Peticiones</a>
+                        <a href="{% url 'peticiones'%}" class="nav-link smoothScroll">Peticiones</a>
                     </li>
 
                     <li class="nav-item">
-                        <a href="#schedule" class="nav-link smoothScroll">Ayuda</a>
+                        <a href="{% url 'ayuda'%}" class="nav-link smoothScroll">Ayuda</a>
                     </li>
                 </ul>
             </div>
@@ -61,16 +61,24 @@
 
                          <div class="col-lg-8 col-md-10 mx-auto col-12">
                               <div class="hero-text mt-5 text-center">
-                                <h class="text-white" >Cargar Archivo</h>
-                                <input type="file" id="archivo" name="archivo" accept="XML/xml, .xml, .XML">
-                                <a class="btn custom-btn bordered mt-3" >Enviar</a>
-                                <a class="btn custom-btn bordered mt-3" >Reset</a>
-                                <h6 >Entrada</h6>
-                                    <textarea name="comentarios" rows="20" cols="20">Escribe aquí tus comentarios</textarea>
-                                <h6 >Salida</h6>
-                                    <textarea name="comentarios" rows="20" cols="20">Escribe aquí tus comentarios</textarea>
-
-                              </div>
+                                <h1>Cargar Archivo</h1>
+                                <form action="/cargar/"  method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                <br>
+                                <input type="file" id="file" name="file" accept="text/xml">
+                                <div class="container py-3">
+                                    {% if content %}   
+                                        <textarea style="margin-right: 1rem;" label="textarea" name="textarea" rows="20" cols="70">{{content}}</textarea>
+                                        <textarea label="textarea" name="textarea2" rows="20" cols="70">{{response}}</textarea>
+                                    {% else %}
+                                        <textarea style="margin-right: 1rem;" label="textarea" name="textarea" rows="20" cols="70"></textarea>
+                                        <textarea label="textarea" name="textarea2" rows="20" cols="70"></textarea>
+                                    {% endif %}
+                                </div>
+                                <button  type="submit" class="btn btn-dark btn-lg">Enviar</button>
+                            </form>
+                            {% endblock content %}                         
+                               </div>
                          </div>
 
                     </div>

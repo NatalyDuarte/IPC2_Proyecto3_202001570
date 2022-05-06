@@ -36,7 +36,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="{% url 'app'%}" class="nav-link smoothScroll">Cargar Archivo</a>
+                        <a href="{% url 'cargararchivo'%}" class="nav-link smoothScroll">Cargar Archivo</a>
                     </li>
 
                     <li class="nav-item">
@@ -61,14 +61,12 @@
 
                          <div class="col-lg-8 col-md-10 mx-auto col-12">
                               <div class="hero-text mt-5 text-center">
-
-                                <h1 class="text-white" >Nataly Saraí Guzmán Duarte</h1>
-                                <h6 >Carnet: 202001570</h6>
-                                <h6>CURSO:</h6><br>
-                                <h6><b>Curso:</b> Introduccion a la Programacion y Computacion 2</h6>
-                                <h6><b>Docente:</b> Ing. Byron Rodolfo Zepeda Arevalo</h6>
-                                <h6><b>Tutor Academico:</b> Javier Estuardo Lima Abrego</h6>
-                                   
+                                <h1 class="text-white" >Bienvenidos al modulo de peticiones</h1>
+                                <a href="{% url 'estudiante'%}" class="btn custom-btn bordered mt-3" >Consultar datos</a>
+                                <a href="{% url 'docu'%}" class="btn custom-btn bordered mt-3" >Resumen de clasificación por fecha</a>
+                                <a href="{% url 'docu'%}" class="btn custom-btn bordered mt-3" >Resumen por rango de fechas</a>
+                                <a href="{% url 'docu'%}" class="btn custom-btn bordered mt-3" >Reporte en PDF</a>
+                                <a href="{% url 'docu'%}" class="btn custom-btn bordered mt-3" >Prueba de mensaje</a> 
                               </div>
                          </div>
 
