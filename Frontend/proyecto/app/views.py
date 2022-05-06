@@ -9,26 +9,6 @@ def app(request):
     blogs = Post.objects.all()
     return render(request,"app/inicio.html",{"blogs":blogs})
 
-def cargaMasiva(request):
-    ctx = {
-        'content':None,
-        'response':None
-    }
-    if request.method == 'POST':
-        form = FileForm(request.POST, request.FILES)
-        if form.is_valid():
-            f = request.FILES['file']
-            xml_binary = f.read()
-            xml = xml_binary.decode('utf-8')
-            ctx['content'] = xml
-            response = request.post(endpoint + 'add', data=xml_binary)
-            if response.ok:
-                raiz = ET.parse("../Backend/Resultado.xml")
-                raiz=raiz.getroot()
-                cadenaXML = ET.tostring(raiz, encoding='unicode', method='xml')
-                ctx['response'] = cadenaXML
-            else:
-                ctx['response'] = 'El archivo se envio, pero hubo un error en el servidor'
-    else:
-        return render(request, 'app/index.html')
-    return render(request, 'app/index.html', ctx)
+def archivocar(request):
+    blogs = Post.objects.all()
+    return render(request,"app/archivo.html",{"blogs":blogs})
