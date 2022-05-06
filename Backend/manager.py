@@ -551,6 +551,7 @@ class manager():
         self.mensajeprueba.append(new)
 
     def xmlrespuestaprue(self):
+        self.mensaser = []
         raiz = ET.Element("respuesta")
         for i in self.mensajeprueba:
             ET.SubElement(raiz, "fecha").text = str(i.fecha)
@@ -559,30 +560,16 @@ class manager():
             respuesta = ET.SubElement(raiz, "empresas")
             nomemp=self.Obempresa(i.fecha)
             empre=ET.SubElement(respuesta,"empresa", nombre=nomemp)
-            if nomemp=="No existe":
-                nomser=self.Obeservi(i.fecha)
-                servis=ET.SubElement(empre, "servicio", nombre=nomser)
-                mensserv=ET.SubElement(servis, "mensajes")
-                ET.SubElement(mensserv, "total").text=str(self.contadorservi)
-                if len(self.mensaser)!=0:         
-                    posi2=self.cantidadPosi(i,self.mensaser)  
-                    ET.SubElement(mensserv, "positivos").text=str(0)               
-                    nega2=self.cantidadNega(i,self.mensaser)  
-                    ET.SubElement(mensserv, "negativos").text=str(0)                 
-                    neu2=self.cantidadNeu(i,self.mensaser)  
-                    ET.SubElement(mensserv, "neutros").text=str(neu2+nega2+posi2)
-            else:
-                nomser=self.Obeservi(i.fecha)
-                servis=ET.SubElement(empre, "servicio", nombre=nomser)
-                mensserv=ET.SubElement(servis, "mensajes")
-                ET.SubElement(mensserv, "total").text=str(self.contadorservi)
-                if len(self.mensaser)!=0:         
-                    posi2=self.cantidadPosi(i,self.mensaser)  
-                    ET.SubElement(mensserv, "positivos").text=str(posi2)               
-                    nega2=self.cantidadNega(i,self.mensaser)  
-                    ET.SubElement(mensserv, "negativos").text=str(nega2)                 
-                    neu2=self.cantidadNeu(i,self.mensaser)  
-                    ET.SubElement(mensserv, "neutros").text=str(neu2) 
+            nomser=self.Obeservi(i.fecha)
+            servis=ET.SubElement(respuesta, "servicio", nombre=nomser)
+            mensserv=ET.SubElement(servis, "mensajes")
+            if len(self.mensaser)!=0:         
+                posi2=self.cantidadPosi(i,self.mensajeprueba)  
+                ET.SubElement(mensserv, "positivos").text=str(posi2)               
+                nega2=self.cantidadNega(i,self.mensajeprueba)  
+                ET.SubElement(mensserv, "negativos").text=str(nega2)                 
+                neu2=self.cantidadNeu(i,self.mensajeprueba)  
+                ET.SubElement(mensserv, "neutros").text=str(neu2) 
             self.Cantidades(i.mensaje)
             ET.SubElement(respuesta, "palabras_positivas").text=str(self.contpositivos)
             ET.SubElement(respuesta, "palabras_negativas").text=str(self.contnegativos)
@@ -597,6 +584,7 @@ class manager():
   
         filexml = ET.ElementTree(raiz)
         filexml.write("ResultadoMens.xml",encoding='utf-8')
+        self.mensajeprueba = []
 
     def Cantidades(self,mensaje):
         self.contpositivos = 0
