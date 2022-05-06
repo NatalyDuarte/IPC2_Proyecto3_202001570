@@ -1,4 +1,3 @@
-from os import POSIX_SPAWN_DUP2
 import xml.etree.ElementTree as ET
 import re
 import json
@@ -28,6 +27,8 @@ class manager():
         self.mensaser = []
         self.cantidadempre = []
         self.mensajeprueba = []
+        self.contpositivos = 0
+        self.contnegativos = 0
 
     def agregardiccioposi(self, palabra):
         new = positivos(palabra)
@@ -555,11 +556,11 @@ class manager():
             ET.SubElement(raiz, "fecha").text = str(i.fecha)
             ET.SubElement(raiz, "red_social").text = i.redsocial
             ET.SubElement(raiz, "usuario").text = i.usuario
-            respuesta = ET.SubElement(raiz, "empresas").text = i.fecha
+            respuesta = ET.SubElement(raiz, "empresas")
             nomemp=self.Obempresa(i.fecha)
             empre=ET.SubElement(respuesta,"empresa", nombre=nomemp)
             if nomemp=="No existe":
-                nomser=self.Obeservi(i)
+                nomser=self.Obeservi(i.fecha)
                 servis=ET.SubElement(empre, "servicio", nombre=nomser)
                 mensserv=ET.SubElement(servis, "mensajes")
                 ET.SubElement(mensserv, "total").text=str(self.contadorservi)
@@ -569,9 +570,9 @@ class manager():
                     nega2=self.cantidadNega(i,self.mensaser)  
                     ET.SubElement(mensserv, "negativos").text=str(0)                 
                     neu2=self.cantidadNeu(i,self.mensaser)  
-                    ET.SubElement(mensserv, "neutros").text=str(neu2+nega2+POSIX_SPAWN_DUP2)
+                    ET.SubElement(mensserv, "neutros").text=str(neu2+nega2+posi2)
             else:
-                nomser=self.Obeservi(i)
+                nomser=self.Obeservi(i.fecha)
                 servis=ET.SubElement(empre, "servicio", nombre=nomser)
                 mensserv=ET.SubElement(servis, "mensajes")
                 ET.SubElement(mensserv, "total").text=str(self.contadorservi)
@@ -582,12 +583,45 @@ class manager():
                     ET.SubElement(mensserv, "negativos").text=str(nega2)                 
                     neu2=self.cantidadNeu(i,self.mensaser)  
                     ET.SubElement(mensserv, "neutros").text=str(neu2) 
-            posi=self.cantidadPosi(i.fecha,self.mensajeprueba)
-            ET.SubElement(respuesta, "palabras_positivas").text=str(posi)
-            nega=self.cantidadNega(i.fecha,self.mensajeprueba)
-            ET.SubElement(respuesta, "palabras_negativas").text=str(nega)
-            neu=self.cantidadNeu(i.fecha,self.mensajeprueba)
-            ET.SubElement(respuesta, "palabras_neutras").text=str(neu)
+            self.Cantidades(i.mensaje)
+            ET.SubElement(respuesta, "palabras_positivas").text=str(self.contpositivos)
+            ET.SubElement(respuesta, "palabras_negativas").text=str(self.contnegativos)
+            pala=" "
+            if self.contpositivos>self.contnegativos:
+                pala="positivo"
+            elif self.contpositivos<self.contnegativos:
+                pala="negativo"
+            else:
+                pala="neutro"
+            ET.SubElement(respuesta, "sentimiento_analizado").text=str(pala)
   
         filexml = ET.ElementTree(raiz)
         filexml.write("ResultadoMens.xml",encoding='utf-8')
+
+    def Cantidades(self,mensaje):
+        self.contpositivos = 0
+        self.contnegativos = 0
+        for posi in self.positivos:
+            pala=posi.palabra
+            pala=pala.replace(",","")
+            pala=pala.replace(";","") 
+            pala=pala.replace(" ","")    
+            pala=pala.replace(".","") 
+            resu=re.findall(pala,mensaje)
+            if len(resu)!=0:
+                self.contpositivos +=1
+            else:
+                pass
+        for nega in self.negativos:
+            neg=nega.palabra
+            neg=neg.replace(",","")
+            neg=neg.replace(";","") 
+            neg=neg.replace(" ","")    
+            neg=neg.replace(".","") 
+            resus=re.findall(neg,mensaje)
+            if len(resus)!=0:
+                self.contnegativos +=1
+            else:
+                pass
+
+       

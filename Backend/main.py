@@ -1,10 +1,10 @@
 import re
-from types import MethodType
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from xml.etree import ElementTree as ET
 from manager import manager
 import webbrowser
+
 app = Flask(__name__)
 CORS(app)
 
@@ -76,12 +76,12 @@ def ayudaop2():
    return jsonify({'ok' : True, 'msg':'Todo correcto'})
 
 @app.route('/reset', methods=['GET'])
-def ayudaop2():
+def rset():
    manager.resetear()
    return jsonify({'ok' : True, 'msg':'Todo correcto'})
 
 @app.route('/pruebamen', methods = ['POST'])
-def carga():
+def carprue():
     xml = request.data.decode('utf-8')
     xml = xml.lower()
     raiz = ET.XML(xml)
